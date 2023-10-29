@@ -1,32 +1,8 @@
 # 인천광역시 미추홀구_어린이보호구역 무인교통단속장비 설치현황
-공공데이터포털 : https://www.data.go.kr/data/15071214/fileData.do
-
-## 제시된 애트리뷰트
-관리기관명, 시설명, 설치위치, 단속방향, 설치목적, 카메라대수, 설치연도, 관할경찰청, 관할경찰서, 위도, 경도
-
-## Rails 명령어
-```
-yarn install
-bundle config set --local path './vendor'
-bundle install
-# 경찰청(NationalPoliceAgencies)
-bundle exec rails generate model NationalPoliceAgency name:string
-# 경찰서(PoliceStations)
-bundle exec rails generate model PoliceStation name:string national_police_agency:belongs_to
-# 관리기관(ManagementAgencies)
-bundle exec rails generate model ManagementAgency name:string national_police_agency:belongs_to:uniq police_station:belongs_to:uniq
-# 카메라설치목적(PurposeOfCameraInstallations)
-bundle exec rails generate model PurposeOfCameraInstallation purpose:string
-# 시설(Facilities)
-bundle exec rails generate model Facility name:string management_agency:belongs_to purpose_of_camera_installation:belongs_to number_of_cameras:integer
-# 카메라단속방향(WhichDirections)
-bundle exec rails generate model WhichDirection direction:string
-# 카메라설치위치(CameraLocations)
-bundle exec rails generate model CameraLocation location:string facility:belongs_to which_direction:belongs_to installation_year:integer latitude:float longitude:float
-bundle exec rails db:create db:migrate
-bundle exec rails dev_seed:create
-bundle exec rails s -p 3000 -b 0.0.0.0
-```
+- 공공데이터포털
+  - https://www.data.go.kr/data/15071214/fileData.do
+- CSV에 제시된 애트리뷰트
+  - 관리기관명, 시설명, 설치위치, 단속방향, 설치목적, 카메라대수, 설치연도, 관할경찰청, 관할경찰서, 위도, 경도
 
 ## 테이블(1차 정리)
 ### 관리기관(ManagementAgencies)
@@ -37,8 +13,6 @@ bundle exec rails s -p 3000 -b 0.0.0.0
   - 관리기관 |}--|| 경찰청
   - 관리기관 |}--|| 경찰서
   - 관리기관 |직접관계없음| 카메라설치위치
-- 작성커멘드
-  - `bundle exec rails generate model ManagementAgency name:string national_police_agency:belongs_to:uniq police_station:belongs_to:uniq`
   
 ### 시설(Facilities)
 - 종속성
@@ -48,8 +22,6 @@ bundle exec rails s -p 3000 -b 0.0.0.0
   - 시설 ||--{| 카메라설치위치
   - 시설 |직접관계없음| 경찰청
   - 시설 |직접관계없음| 경찰서
-- 작성커멘드
-  - `bundle exec rails generate model Facility name:string  purpose:string number_of_cameras:integer management_agency:belongs_to`
 
 ### 카메라설치위치(CameraLocations)
 - 종속성
@@ -59,8 +31,6 @@ bundle exec rails s -p 3000 -b 0.0.0.0
   - 카메라설치위치 |}--|| 시설
   - 카메라설치위치 |직접관계없음| 경찰청
   - 카메라설치위치 |직접관계없음| 경찰서
-- 작성커멘드
-  - `bundle exec rails generate model CameraLocation location:string  which_direction:string  installation_year:integer latitude:float longitude:float facility:belongs_to`
 
 ### 경찰청(NationalPoliceAgencies)
 - 종속성
@@ -71,8 +41,6 @@ bundle exec rails s -p 3000 -b 0.0.0.0
   - 경찰청 |직접관계없음| 시설
   - 경찰청 |직접관계없음| 카메라설치위치
   - 경찰청 ||--{| 경찰서
-- 작성커멘드
-  - `bundle exec rails generate model NationalPoliceAgency name:string`
 
 ### 경찰서(PoliceStations)
 - 종속성
@@ -83,8 +51,6 @@ bundle exec rails s -p 3000 -b 0.0.0.0
   - 경찰서 |직접관계없음| 시설
   - 경찰서 |직접관계없음| 카메라설치위치
   - 경찰서 |}--|| 경찰청
-- 작성커멘드
-  - `bundle exec rails generate model PoliceStation name:string national_police_agency:belongs_to`
 
 
 ## 1차 정리의 이상현상 검토
@@ -140,8 +106,6 @@ bundle exec rails s -p 3000 -b 0.0.0.0
   - 관리기관 |직접관계없음| 카메라단속방향
   - 관리기관 |}--|| 경찰청
   - 관리기관 |}--|| 경찰서
-- 작성커멘드
-  - `bundle exec rails generate model ManagementAgency name:string national_police_agency:belongs_to:uniq police_station:belongs_to:uniq`
 
 ### 시설(Facilities)
 - 종속성
@@ -153,8 +117,6 @@ bundle exec rails s -p 3000 -b 0.0.0.0
   - 시설 |직접관계없음| 카메라단속방향
   - 시설 |직접관계없음| 경찰청
   - 시설 |직접관계없음| 경찰서
-- 작성커멘드
-  - `bundle exec rails generate model Facility name:string management_agency:belongs_to purpose_of_camera_installation:belongs_to number_of_cameras:integer`
 
 ### 카메라설치목적(PurposeOfCameraInstallations)
 - 종속성
@@ -166,8 +128,6 @@ bundle exec rails s -p 3000 -b 0.0.0.0
   - 카메라설치목적 |직접관계없음| 카메라단속방향
   - 카메라설치목적 |직접관계없음| 경찰청
   - 카메라설치목적 |직접관계없음| 경찰서
-- 작성커멘드
-  - `bundle exec rails generate model PurposeOfCameraInstallation purpose:string`
 
 ### 카메라설치위치(CameraLocations)
 - 종속성
@@ -179,8 +139,6 @@ bundle exec rails s -p 3000 -b 0.0.0.0
   - 카메라설치위치 |}--|| 카메라단속방향
   - 카메라설치위치 |직접관계없음| 경찰청
   - 카메라설치위치 |직접관계없음| 경찰서
-- 작성커멘드
-  - `bundle exec rails generate model CameraLocation location:string facility:belongs_to which_direction:belongs_to installation_year:integer latitude:float longitude:float`
 
 ### 카메라단속방향(WhichDirections)
 - 종속성
@@ -192,8 +150,6 @@ bundle exec rails s -p 3000 -b 0.0.0.0
   - 카메라단속방향 ||--{| 카메라설치위치
   - 카메라단속방향 |직접관계없음| 경찰청
   - 카메라단속방향 |직접관계없음| 경찰서
-- 작성커멘드
-  - `bundle exec rails generate model WhichDirection direction:string`
 
 ### 경찰청(NationalPoliceAgencies)
 - 종속성
@@ -206,8 +162,6 @@ bundle exec rails s -p 3000 -b 0.0.0.0
   - 경찰청 |직접관계없음| 카메라설치위치
   - 경찰청 |직접관계없음| 카메라단속방향
   - 경찰청 ||--{| 경찰서
-- 작성커멘드
-  - `bundle exec rails generate model NationalPoliceAgency name:string`
 
 ### 경찰서(PoliceStations)
 - 종속성
@@ -220,10 +174,6 @@ bundle exec rails s -p 3000 -b 0.0.0.0
   - 경찰서 |직접관계없음| 카메라설치위치
   - 경찰서 |직접관계없음| 카메라단속방향
   - 경찰서 |}--|| 경찰청
-- 작성커멘드
-  - `bundle exec rails generate model PoliceStation name:string national_police_agency:belongs_to`
-
-
 
 ## 2차 정리의 이상현상 검토
 ### 삽입이상
@@ -232,3 +182,39 @@ bundle exec rails s -p 3000 -b 0.0.0.0
 - 있음
   - 카메라설치위치 테이블의 단속방향 항목을 카메라단속방향 테이블로 분리해서 해소했다.
   - 시설 테이블의 설치목적 항목을 카메라설치목적 테이블로 분리해서 해소했다.
+
+## Rails 명령어
+### 초기 설정에 사용했던 명령어
+```
+cd $REPOSITORY_ROOT/r_15071214
+rails new . -d postgresql
+# Gemfile에 gem 'rspec-rails', '~> 6.0.0' 추가
+bundle config set --local path './vendor'
+bundle install
+bundle exec rails generate rspec:install
+```
+
+### model과 migration파일 작성할때 사용했던 명령어
+```
+cd $REPOSITORY_ROOT/r_15071214
+# 경찰청(NationalPoliceAgencies)
+bundle exec rails generate model NationalPoliceAgency name:string
+# 경찰서(PoliceStations)
+bundle exec rails generate model PoliceStation name:string national_police_agency:belongs_to
+# 관리기관(ManagementAgencies)
+bundle exec rails generate model ManagementAgency name:string national_police_agency:belongs_to:uniq police_station:belongs_to:uniq
+# 카메라설치목적(PurposeOfCameraInstallations)
+bundle exec rails generate model PurposeOfCameraInstallation purpose:string
+# 시설(Facilities)
+bundle exec rails generate model Facility name:string management_agency:belongs_to purpose_of_camera_installation:belongs_to number_of_cameras:integer
+# 카메라단속방향(WhichDirections)
+bundle exec rails generate model WhichDirection direction:string
+# 카메라설치위치(CameraLocations)
+bundle exec rails generate model CameraLocation location:string facility:belongs_to which_direction:belongs_to installation_year:integer latitude:float longitude:float
+```
+
+### rspec 실행 명령어
+```
+cd $REPOSITORY_ROOT/r_15071214
+bundle exec rspec --format documentation
+```
