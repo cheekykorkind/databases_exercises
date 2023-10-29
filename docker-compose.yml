@@ -1,0 +1,40 @@
+version: "3.9"
+
+# DOCKER_UID=$(id -u $USER) DOCKER_GID=$(id -u $USER) docker-compose up --build
+services:
+  dbe-app:
+    container_name: dbe-app
+    user: $DOCKER_UID:$DOCKER_GID
+    build:
+      args:
+        USER_UID: $DOCKER_UID
+        USER_GID: $DOCKER_GID
+        UNAME: $USER
+    volumes:
+      - ./:/workspace/myapp
+    environment:
+      VITE_RUBY_HOST: 0.0.0.0
+      RAILS_ENV: development
+      RAILS_DB_HOST: dbe-db
+    ports:
+      - 3000:3000
+      - 3036:3036 # vite
+    depends_on:
+      - dbe-db
+    stdin_open: true
+    tty: true
+    entrypoint: /bin/bash
+
+  dbe-db:
+    container_name: dbe-db
+    image: postgres:16.0-alpine
+    volumes:
+      - dbe_psgl_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+
+volumes:
+  dbe_psgl_data:
