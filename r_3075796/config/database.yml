@@ -1,0 +1,15 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("RAILS_DB_HOST") { "dbe-db" } %>
+  username: postgres
+  password: postgres
+
+development:
+  <<: *default
+  database: r_3075796_development
+
+test:
+  <<: *default
+  database: r_3075796_test
