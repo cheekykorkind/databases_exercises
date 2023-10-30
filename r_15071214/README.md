@@ -192,6 +192,7 @@ rails new . -d postgresql
 bundle config set --local path './vendor'
 bundle install
 bundle exec rails generate rspec:install
+bundle exec rails db:create db:migrate
 ```
 
 ### model과 migration파일 작성할때 사용했던 명령어
