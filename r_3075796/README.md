@@ -7,6 +7,10 @@
 ## 테이블(1차 정리)
 - 연번은 무시.
 - 시설명을 기본키라고 가정하고 정규화를 해본다.
+```mermaid
+erDiagram
+    MultiUseFacilities
+``` 
 
 ### 다중이용시설(MultiUseFacilities)
 - 종속성
@@ -18,6 +22,11 @@
   - 그러므로 `보충설명` 애트리뷰트를 추가한다
 
 ## 테이블(2차 정리)
+```mermaid
+erDiagram
+    MultiUseFacilities
+``` 
+
 ### 다중이용시설(MultiUseFacilities)
 - 종속성
   - 시설명 -> 소재지, 보충설명, 주용도, 연면적
@@ -33,6 +42,11 @@
   - 그러므로 `주용도` 테이블을 별도로 만든다
 
 ## 테이블(3차 정리)
+```mermaid
+erDiagram
+    MainPurposes ||--|{ MultiUseFacilities: has_many
+``` 
+
 ### 다중이용시설(MultiUseFacilities)
 - 종속성
   - 시설명 -> 소재지, 보충설명, 연면적
@@ -75,6 +89,12 @@
 
 ## 테이블(4차 정리)
 삽입이상, 수정이상, 삭제이상이 발생한 `소재지` 를 별도의 테이블로 분리해서 해소한다.
+```mermaid
+erDiagram
+    MainPurposes ||--|{ MultiUseFacilities: has_many
+    Addresses ||--|{ MultiUseFacilities: has_many
+``` 
+
 ### 다중이용시설(MultiUseFacilities)
 - 종속성
   - 시설명 -> 보충설명, 연면적
