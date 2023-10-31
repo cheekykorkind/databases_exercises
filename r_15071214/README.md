@@ -5,6 +5,15 @@
   - 관리기관명, 시설명, 설치위치, 단속방향, 설치목적, 카메라대수, 설치연도, 관할경찰청, 관할경찰서, 위도, 경도
 
 ## 테이블(1차 정리)
+```mermaid
+erDiagram
+    ManagementAgencies ||--|{ Facilities: has_many
+    NationalPoliceAgencies ||--|{ ManagementAgencies: has_many
+    PoliceStations ||--|{ ManagementAgencies: has_many
+    Facilities ||--|{ CameraLocations: has_many
+    NationalPoliceAgencies ||--|{ PoliceStations: has_many
+``` 
+
 ### 관리기관(ManagementAgencies)
 - 종속성
   - 관리기관명 -> 경찰청id, 경찰서id
@@ -96,6 +105,18 @@
     - 레코드1에 단속방향 `도화IC→도화사거리` 이 유일하게 존재했다면, 설치위치만 삭제하려고 했는데 의도치않게 단속방향의 유일한 값을 지우게 된다.
 
 ## 테이블(2차 정리)
+```mermaid
+erDiagram
+    ManagementAgencies ||--|{ Facilities: has_many
+    NationalPoliceAgencies ||--|{ ManagementAgencies: has_many
+    PoliceStations ||--|{ ManagementAgencies: has_many
+    ManagementAgencies ||--|{ Facilities: has_many
+    Facilities ||--|{ CameraLocations: has_many
+    PurposeOfCameraInstallations ||--|{ Facilities: has_many
+    NationalPoliceAgencies ||--|{ PoliceStations: has_many
+    WhichDirections ||--|{ CameraLocations: has_many
+``` 
+
 ### 관리기관(ManagementAgencies)
 - 종속성
   - 관리기관명 -> 경찰청id, 경찰서id
