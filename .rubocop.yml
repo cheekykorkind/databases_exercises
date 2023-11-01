@@ -1,0 +1,13 @@
+require: rubocop-rails
+
+AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+  Exclude:
+    - 'vendor/**/*'
+    - '**/vendor/**/*'
+    - '**/bin/**/*'
+    - '**/db/migrate/*'
+    - '**/log/**/*'
+    - '**/node_modules/**/*'
+    - '**/tmp/**/*'
