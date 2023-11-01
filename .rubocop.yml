@@ -11,3 +11,9 @@ AllCops:
     - '**/log/**/*'
     - '**/node_modules/**/*'
     - '**/tmp/**/*'
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
