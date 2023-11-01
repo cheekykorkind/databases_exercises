@@ -1,0 +1,28 @@
+require: rubocop-rails
+
+AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+  Exclude:
+    - 'vendor/**/*'
+    - '**/vendor/**/*'
+    - '**/bin/**/*'
+    - '**/db/migrate/*'
+    - '**/log/**/*'
+    - '**/node_modules/**/*'
+    - '**/tmp/**/*'
+
+# Block줄수가 많다
+Metrics/BlockLength:
+  Exclude:
+    - '**/spec/**/*'
+    - '**/db/schema.rb'
+    - '**/config/environments/**/*'
+
+# 파일 첫부분에 도큐먼트의 설명을 써야함
+Style/Documentation:
+  Enabled: false
+
+# `# frozen_string_literal: true`을 강제함
+Style/FrozenStringLiteralComment:
+  Enabled: false

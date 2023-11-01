@@ -10,34 +10,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_10_30_130514) do
+ActiveRecord::Schema[7.1].define(version: 20_231_030_130_514) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+  enable_extension 'plpgsql'
 
-  create_table "addresses", force: :cascade do |t|
-    t.string "address"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table 'addresses', force: :cascade do |t|
+    t.string 'address'
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
   end
 
-  create_table "main_purposes", force: :cascade do |t|
-    t.string "purpose"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table 'main_purposes', force: :cascade do |t|
+    t.string 'purpose'
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
   end
 
-  create_table "multi_use_facilities", force: :cascade do |t|
-    t.string "name"
-    t.string "total_floor_area"
-    t.string "description"
-    t.bigint "main_purpose_id", null: false
-    t.bigint "address_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["address_id"], name: "index_multi_use_facilities_on_address_id"
-    t.index ["main_purpose_id"], name: "index_multi_use_facilities_on_main_purpose_id"
+  create_table 'multi_use_facilities', force: :cascade do |t|
+    t.string 'name'
+    t.string 'total_floor_area'
+    t.string 'description'
+    t.bigint 'main_purpose_id', null: false
+    t.bigint 'address_id', null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['address_id'], name: 'index_multi_use_facilities_on_address_id'
+    t.index ['main_purpose_id'], name: 'index_multi_use_facilities_on_main_purpose_id'
   end
 
-  add_foreign_key "multi_use_facilities", "addresses"
-  add_foreign_key "multi_use_facilities", "main_purposes"
+  add_foreign_key 'multi_use_facilities', 'addresses'
+  add_foreign_key 'multi_use_facilities', 'main_purposes'
 end

@@ -23,7 +23,12 @@ services:
       - dbe-db
     stdin_open: true
     tty: true
-    entrypoint: /bin/bash
+    entrypoint: |
+      bash -e -c "
+      bundle config set --local path './vendor'
+      bundle install
+      /bin/bash
+      "
 
   dbe-db:
     container_name: dbe-db
