@@ -4,3 +4,6 @@
 
 ## 커피 전문점
 [㈜스타벅스커피 코리아](1/README.md)  
+
+## 블로그
+[LY Corporation Tech Blog](2/README.md)  
