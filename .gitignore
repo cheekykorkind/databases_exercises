@@ -1,2 +1,6 @@
 # bundle install
 /vendor
+
+# python
+__pycache__
+*/**/__pycache__
