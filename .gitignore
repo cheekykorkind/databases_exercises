@@ -4,3 +4,13 @@
 # python
 __pycache__
 */**/__pycache__
+
+# localstack
+localstack_volume
+*/**/localstack_volume
+
+# terraform
+*/**/.terraform/
+*/**/terraform.tfvars
+*/**/terraform.tfstate
+*/**/terraform.tfstate.backup

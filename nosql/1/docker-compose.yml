@@ -1,0 +1,41 @@
+version: "3.9"
+
+# docker compose up --build
+services:
+  nosql-localstack:
+    container_name: "nosql-localstack"
+    image: localstack/localstack:3.3.0
+    ports:
+      - "127.0.0.1:4566:4566" # LocalStack Gateway
+    environment:
+      # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
+      DEBUG: 1
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      TF_VERSION: 1.8.4
+    volumes:
+      - "./localstack_volume:/var/lib/localstack"
+      - "./code/terraform:/var/lib/terraform"
+      - "./code/terraform/localstack_init/init_terraform.sh:/etc/localstack/init/boot.d/init_terraform.sh" # executed in the container before localstack starts
+      - "./code/terraform/localstack_init/tf_apply.sh:/etc/localstack/init/ready.d/tf_apply.sh" # executed when localstack becomes ready
+      - "/var/run/docker.sock:/var/run/docker.sock"
+  nosql-py:
+    container_name: nosql-py
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - nosql-localstack
+    volumes:
+      - ./:/workspace/myapp
+    tty: true
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    entrypoint: |
+      bash -e -c "
+      pip install -r requirements.txt
+      /bin/bash
+      "
