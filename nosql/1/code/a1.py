@@ -20,3 +20,7 @@ def new_user(d_util, user_id):
 
 def update_user(d_util, deserialized_item):
     return d_util.update_item(deserialized_item)
+
+
+def delete_user(d_util, deserialized_pk_sk):
+    return d_util.delete_item(deserialized_pk_sk)

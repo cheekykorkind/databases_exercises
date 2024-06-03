@@ -61,6 +61,11 @@ class DynamodbUtil:
             ReturnValues="UPDATED_NEW",
         )
 
+    def delete_item(self, deserialized_pk_sk):
+        pk_sk = self.serialize_item(deserialized_pk_sk)
+
+        return self.client.delete_item(TableName=self.table_name, Key=pk_sk)
+
     # q_param = {
     #     "TableName": table_name,
     #     "ScanIndexForward": False,

@@ -71,3 +71,18 @@ def test_scan_user(d_util, expected):
 def test_update_item(d_util, deserialized_item, expected):
     update_user(d_util, deserialized_item)
     assert d_util.scan() == expected
+
+
+@pytest.mark.parametrize(
+    "d_util, deserialized_pk_sk, expected",
+    [
+        (
+            DynamodbUtil(table_name="user"),
+            {"PK": "u#1", "SK": "count"},
+            [],
+        )
+    ],
+)
+def test_delete_user(d_util, deserialized_pk_sk, expected):
+    delete_user(d_util, deserialized_pk_sk)
+    assert d_util.scan() == expected
