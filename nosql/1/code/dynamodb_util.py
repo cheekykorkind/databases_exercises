@@ -2,20 +2,21 @@ import boto3
 from boto3.dynamodb.types import TypeSerializer, TypeDeserializer
 import datetime
 from decimal import *
-import pprint
+
 
 class DynamodbUtil:
     def __init__(self, table_name):
-        self.client = boto3.client("dynamodb", region_name="us-east-1", endpoint_url="http://localhost:4566")
+        self.client = boto3.client(
+            "dynamodb",
+            region_name="us-east-1",
+            endpoint_url="http://nosql-localstack:4566",
+        )
         self.table_name = table_name
         self.serializer = TypeSerializer()
         self.deserializer = TypeDeserializer()
 
     def serialize_item(self, item):
-        return {
-            k: self.serializer.serialize(v)
-            for k, v in item.items()
-        }
+        return {k: self.serializer.serialize(v) for k, v in item.items()}
 
     # item = {
     #     "PK": "u#12345",
@@ -26,36 +27,39 @@ class DynamodbUtil:
     # }
     def put_item(self, item):
         payload = {
-            'TableName': self.table_name,
-            'Item': self.serialize_item(item),
+            "TableName": self.table_name,
+            "Item": self.serialize_item(item),
         }
-        self.client.put_item(**payload)
+        return self.client.put_item(**payload)
 
-    # def update_item(self, item):
-    #     # 업데이트할 테이블과 항목의 키 정의
-    #     key = {'PK': {'S': item.get('PK')}}
+    def update_item(self, deserialized_item):
+        s_item = self.serialize_item(deserialized_item)
 
-    #     # 업데이트 표현식 정의
-    #     update_expression = 'SET #attr1 = :val1, #attr2 = :val2'
-    #     expression_attribute_names = {
-    #         '#attr1': 'attribute1',
-    #         '#attr2': 'attribute2'
-    #     }
-    #     expression_attribute_values = {
-    #         ':val1': {'S': 'new_value1'},
-    #         ':val2': {'N': '42'}
-    #     }
+        # 업데이트할 테이블과 항목의 키 정의
+        pk_sk = {"PK": s_item["PK"], "SK": s_item["SK"]}
+        del s_item["PK"]
+        del s_item["SK"]
 
-    #     # 업데이트 요청
-    #     response = dynamodb.update_item(
-    #         TableName=self.table_name,
-    #         Key=key,
-    #         UpdateExpression=update_expression,
-    #         ExpressionAttributeNames=expression_attribute_names,
-    #         ExpressionAttributeValues=expression_attribute_values,
-    #         ReturnValues="UPDATED_NEW"  # 업데이트된 새 값을 반환하도록 설정
-    #     )
+        expression_attribute_names = {}
+        expression_attribute_values = {}
+        update_expression_pairs = []
+        i = 0
+        for s_k, s_v in s_item.items():
+            attr_name = f"#attr{i}"
+            val_name = f":val{i}"
+            update_expression_pairs.append(f"{attr_name} = {val_name}")
+            expression_attribute_names[attr_name] = s_k
+            expression_attribute_values[val_name] = s_v
+            i += 1
 
+        return self.client.update_item(
+            TableName=self.table_name,
+            Key=pk_sk,
+            UpdateExpression=f"SET {','.join(update_expression_pairs)}",
+            ExpressionAttributeNames=expression_attribute_names,
+            ExpressionAttributeValues=expression_attribute_values,
+            ReturnValues="UPDATED_NEW",
+        )
 
     # q_param = {
     #     "TableName": table_name,
@@ -64,40 +68,17 @@ class DynamodbUtil:
     #     "ExpressionAttributeValues": {":PK": {"S": str(f"{post_id}#likelist")}},
     # }
     def query(self, q_param):
-        return [{k: self.deserializer.deserialize(v) for k, v in item.items()} for item in self.client.query(**q_param)["Items"]]
-
+        return [
+            {k: self.deserializer.deserialize(v) for k, v in item.items()}
+            for item in self.client.query(**q_param)["Items"]
+        ]
 
     def scan(self):
         paginator = self.client.get_paginator("scan")
         items = []
         for page in paginator.paginate(**{"TableName": self.table_name}):
-            items += [{k: self.deserializer.deserialize(v) for k, v in item.items()} for item in page["Items"]]
+            items += [
+                {k: self.deserializer.deserialize(v) for k, v in item.items()}
+                for item in page["Items"]
+            ]
         return items
-
-    # # 업데이트할 테이블과 항목의 키 정의
-    # key = {'PK': {'S': item.get('PK')}}
-    # # 업데이트 표현식 정의
-    # update_expression = 'SET #attr1 = :val1, #attr2 = :val2'
-    # expression_attribute_names = {
-    #     '#attr1': 'attribute1',
-    #     '#attr2': 'attribute2'
-    # }
-    # expression_attribute_values = {
-    #     ':val1': {'S': 'new_value1'},
-    #     ':val2': {'N': '42'}
-    # }
-    def ss1(self):
-        item = {
-            'PK': 'u#f71076f4-68f5-4926-b52d-499b2bb16459',
-            'SK': 'count',
-            'follower#': Decimal('0'),
-            'following#': Decimal('0'),
-            'post#': Decimal('0')
-        }
-        # pprint.pprint(item)
-        aaa1=self.serialize_item(item)
-
-
-
-        
-        
