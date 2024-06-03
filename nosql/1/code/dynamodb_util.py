@@ -66,6 +66,14 @@ class DynamodbUtil:
 
         return self.client.delete_item(TableName=self.table_name, Key=pk_sk)
 
+    def get_item(self, deserialized_pk_sk):
+        pk_sk = self.serialize_item(deserialized_pk_sk)
+        raw_item = self.client.get_item(TableName=self.table_name, Key=pk_sk).get(
+            "Item", {}
+        )
+
+        return {k: self.deserializer.deserialize(v) for k, v in raw_item.items()}
+
     # q_param = {
     #     "TableName": table_name,
     #     "ScanIndexForward": False,

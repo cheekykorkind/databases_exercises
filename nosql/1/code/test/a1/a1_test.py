@@ -24,6 +24,26 @@ def test_new_user(d_util, user_id, expected):
 
 
 @pytest.mark.parametrize(
+    "d_util, deserialized_pk_sk, expected",
+    [
+        (
+            DynamodbUtil(table_name="user"),
+            {"PK": "u#1", "SK": "count"},
+            {
+                "PK": "u#1",
+                "SK": "count",
+                "follower#": Decimal("0"),
+                "following#": Decimal("0"),
+                "post#": Decimal("0"),
+            },
+        )
+    ],
+)
+def test_get_user(d_util, deserialized_pk_sk, expected):
+    assert get_user(d_util, deserialized_pk_sk) == expected
+
+
+@pytest.mark.parametrize(
     "d_util, expected",
     [
         (
