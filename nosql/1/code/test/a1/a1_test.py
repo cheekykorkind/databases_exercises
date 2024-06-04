@@ -7,40 +7,66 @@ module_name = "a1"
 
 
 @pytest.mark.parametrize(
-    "d_util, user_id, expected",
+    "d_util, serialized_item, expected",
     [
         (
             DynamodbUtil(table_name="user"),
-            1,
+            {
+                "PK": f"u#1",
+                "SK": "count",
+                "follower#": 0,
+                "following#": 0,
+                "post#": 0,
+            },
             200,
-        )
+        ),
+        (
+            DynamodbUtil(table_name="user"),
+            {
+                "PK": f"u#1",
+                "SK": "info",
+                "name": "hyuklee",
+                "content": "My name is Hyuk Lee",
+                "imageUrl": "s3://image1",
+            },
+            200,
+        ),
     ],
 )
-def test_new_user(d_util, user_id, expected):
+def test_new_user(d_util, serialized_item, expected):
     assert (
-        new_user(d_util, user_id).get("ResponseMetadata").get("HTTPStatusCode")
+        new_user(d_util, serialized_item).get("ResponseMetadata").get("HTTPStatusCode")
         == expected
     )
 
 
 @pytest.mark.parametrize(
-    "d_util, deserialized_pk_sk, expected",
+    "d_util, user_id, expected",
     [
         (
             DynamodbUtil(table_name="user"),
-            {"PK": "u#1", "SK": "count"},
-            {
-                "PK": "u#1",
-                "SK": "count",
-                "follower#": Decimal("0"),
-                "following#": Decimal("0"),
-                "post#": Decimal("0"),
-            },
+            1,
+            [
+                {
+                    "PK": "u#1",
+                    "SK": "info",
+                    "content": "My name is Hyuk Lee",
+                    "imageUrl": "s3://image1",
+                    "name": "hyuklee",
+                },
+                {
+                    "PK": "u#1",
+                    "SK": "count",
+                    "follower#": Decimal("0"),
+                    "following#": Decimal("0"),
+                    "post#": Decimal("0"),
+                },
+            ],
         )
     ],
 )
-def test_get_user(d_util, deserialized_pk_sk, expected):
-    assert get_user(d_util, deserialized_pk_sk) == expected
+def test_query_user_info_by_user_id(d_util, user_id, expected):
+    assert query_user_info_by_user_id(d_util, user_id) == expected
 
 
 @pytest.mark.parametrize(
@@ -55,7 +81,14 @@ def test_get_user(d_util, deserialized_pk_sk, expected):
                     "follower#": Decimal("0"),
                     "following#": Decimal("0"),
                     "post#": Decimal("0"),
-                }
+                },
+                {
+                    "PK": "u#1",
+                    "SK": "info",
+                    "content": "My name is Hyuk Lee",
+                    "imageUrl": "s3://image1",
+                    "name": "hyuklee",
+                },
             ],
         )
     ],
@@ -83,7 +116,14 @@ def test_scan_user(d_util, expected):
                     "follower#": Decimal("12"),
                     "following#": Decimal("34"),
                     "post#": Decimal("56"),
-                }
+                },
+                {
+                    "PK": "u#1",
+                    "SK": "info",
+                    "content": "My name is Hyuk Lee",
+                    "imageUrl": "s3://image1",
+                    "name": "hyuklee",
+                },
             ],
         )
     ],
@@ -99,7 +139,15 @@ def test_update_item(d_util, deserialized_item, expected):
         (
             DynamodbUtil(table_name="user"),
             {"PK": "u#1", "SK": "count"},
-            [],
+            [
+                {
+                    "PK": "u#1",
+                    "SK": "info",
+                    "content": "My name is Hyuk Lee",
+                    "imageUrl": "s3://image1",
+                    "name": "hyuklee",
+                }
+            ],
         )
     ],
 )

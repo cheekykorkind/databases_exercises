@@ -74,16 +74,13 @@ class DynamodbUtil:
 
         return {k: self.deserializer.deserialize(v) for k, v in raw_item.items()}
 
-    # q_param = {
-    #     "TableName": table_name,
-    #     "ScanIndexForward": False,
-    #     "KeyConditionExpression": "PK = :PK",
-    #     "ExpressionAttributeValues": {":PK": {"S": str(f"{post_id}#likelist")}},
-    # }
     def query(self, q_param):
+        full_param = {"TableName": self.table_name, "ScanIndexForward": False}
+        full_param.update(q_param)
+
         return [
             {k: self.deserializer.deserialize(v) for k, v in item.items()}
-            for item in self.client.query(**q_param)["Items"]
+            for item in self.client.query(**full_param)["Items"]
         ]
 
     def scan(self):
