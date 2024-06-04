@@ -3,11 +3,9 @@ import json
 from a1 import *
 import pprint
 
-module_name = "a1"
-
 
 @pytest.mark.parametrize(
-    "d_util, serialized_item, expected",
+    "d_util, deserialized_item, expected",
     [
         (
             DynamodbUtil(table_name="user"),
@@ -33,9 +31,11 @@ module_name = "a1"
         ),
     ],
 )
-def test_new_user(d_util, serialized_item, expected):
+def test_new_user(d_util, deserialized_item, expected):
     assert (
-        new_user(d_util, serialized_item).get("ResponseMetadata").get("HTTPStatusCode")
+        new_user(d_util, deserialized_item)
+        .get("ResponseMetadata")
+        .get("HTTPStatusCode")
         == expected
     )
 
@@ -148,7 +148,12 @@ def test_update_item(d_util, deserialized_item, expected):
                     "name": "hyuklee",
                 }
             ],
-        )
+        ),
+        (
+            DynamodbUtil(table_name="user"),
+            {"PK": "u#1", "SK": "info"},
+            [],
+        ),
     ],
 )
 def test_delete_user(d_util, deserialized_pk_sk, expected):
