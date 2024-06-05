@@ -9,6 +9,7 @@ sys.path.append(code_dir)
 from a1 import *
 from a2 import *
 
+
 # pytest커멘드 실행이 끝나면 dynamodb의 모든 record를 삭제
 def pytest_sessionfinish(session, exitstatus):
     d_util = DynamodbUtil(table_name="user")

@@ -90,8 +90,35 @@ def test_query_follower_list_by_user_id(d_util, user_id, expected):
         ),
     ],
 )
-def test_query_follower_list_by_user_id(d_util, user_id, follower_user_id, expected):
-    update_follower(d_util, user_id, follower_user_id)
+def test_increase_follower(d_util, user_id, follower_user_id, expected):
+    increase_follower(d_util, user_id, follower_user_id)
+    assert query_follower_list_by_user_id(d_util, user_id) == expected.get("new_pks")
+    assert query_user_info_by_user_id_and_sk(d_util, user_id, sk="count")[0].get(
+        "follower#"
+    ) == expected.get("updated_follower#")
+
+
+@pytest.mark.parametrize(
+    "d_util, user_id, follower_user_id, expected",
+    [
+        (
+            DynamodbUtil(table_name="user"),
+            10000,
+            20001,
+            {
+                "new_pks": [
+                    {
+                        "PK": "u#10000#follower",
+                        "SK": "u#20000",
+                    },
+                ],
+                "updated_follower#": 1,
+            },
+        )
+    ],
+)
+def test_decrease_follower(d_util, user_id, follower_user_id, expected):
+    decrease_follower(d_util, user_id, follower_user_id)
     assert query_follower_list_by_user_id(d_util, user_id) == expected.get("new_pks")
     assert query_user_info_by_user_id_and_sk(d_util, user_id, sk="count")[0].get(
         "follower#"

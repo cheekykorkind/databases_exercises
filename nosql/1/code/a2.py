@@ -2,8 +2,20 @@ from a1 import *
 import pprint
 
 
-def update_follower(d_util, user_id, follower_user_id):
+def increase_follower(d_util, user_id, follower_user_id):
     new_user(d_util, {"PK": f"u#{user_id}#follower", "SK": f"u#{follower_user_id}"})
+
+    return d_util.update_item(
+        {
+            "PK": f"u#{user_id}",
+            "SK": "count",
+            "follower#": len(query_follower_list_by_user_id(d_util, user_id)),
+        }
+    )
+
+
+def decrease_follower(d_util, user_id, follower_user_id):
+    delete_user(d_util, {"PK": f"u#{user_id}#follower", "SK": f"u#{follower_user_id}"})
 
     return d_util.update_item(
         {
