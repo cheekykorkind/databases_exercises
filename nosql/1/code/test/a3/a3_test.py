@@ -53,9 +53,31 @@ import pprint
             },
             200,
         ),
+        (
+            DynamodbUtil(table_name="user"),
+            {
+                "PK": f"u#30000",
+                "SK": "count",
+                "follower#": 0,
+                "following#": 0,
+                "post#": 0,
+            },
+            200,
+        ),
+        (
+            DynamodbUtil(table_name="user"),
+            {
+                "PK": f"u#30000",
+                "SK": "info",
+                "name": "u30000",
+                "content": "My name is u30000",
+                "imageUrl": "s3://image3",
+            },
+            200,
+        ),
     ],
 )
-def test_two_user(d_util, serialized_item, expected):
+def test_three_user(d_util, serialized_item, expected):
     assert (
         new_user(d_util, serialized_item).get("ResponseMetadata").get("HTTPStatusCode")
         == expected
@@ -63,40 +85,26 @@ def test_two_user(d_util, serialized_item, expected):
 
 
 @pytest.mark.parametrize(
-    "d_util, user_id, expected",
-    [
-        (
-            DynamodbUtil(table_name="user"),
-            10000,
-            [],
-        ),
-    ],
-)
-def test_query_follower_list_by_user_id(d_util, user_id, expected):
-    assert query_follower_list_by_user_id(d_util, user_id) == expected
-
-
-@pytest.mark.parametrize(
-    "d_util, user_id, follower_user_id, expected",
+    "d_util, user_id, following_user_id, expected",
     [
         (
             DynamodbUtil(table_name="user"),
             10000,
             20000,
             {
-                "follower": {
+                "following": {
                     "list": [
                         {
-                            "PK": "u#10000#follower",
+                            "PK": "u#10000#following",
                             "SK": "u#20000",
                         }
                     ],
                     "count": 1,
                 },
-                "following": {
+                "follower": {
                     "list": [
                         {
-                            "PK": "u#20000#following",
+                            "PK": "u#20000#follower",
                             "SK": "u#10000",
                         }
                     ],
@@ -106,57 +114,61 @@ def test_query_follower_list_by_user_id(d_util, user_id, expected):
         )
     ],
 )
-def test_increase_follower(d_util, user_id, follower_user_id, expected):
-    increase_follower(d_util, user_id, follower_user_id)
+def test_increase_u10000s_following_count(d_util, user_id, following_user_id, expected):
+    increase_following(d_util, user_id, following_user_id)
+
     assert (
-        query_follower_list_by_user_id(d_util, user_id) == expected["follower"]["list"]
-    )
-    assert (
-        query_user_info_by_user_id_and_sk(d_util, user_id, sk="count")[0]["follower#"]
-        == expected["follower"]["count"]
-    )
-    assert (
-        query_following_list_by_user_id(d_util, follower_user_id)
+        query_following_list_by_user_id(d_util, user_id)
         == expected["following"]["list"]
     )
     assert (
-        query_user_info_by_user_id_and_sk(d_util, follower_user_id, sk="count")[0][
-            "following#"
-        ]
+        query_user_info_by_user_id_and_sk(d_util, user_id, sk="count")[0]["following#"]
         == expected["following"]["count"]
+    )
+    assert (
+        query_follower_list_by_user_id(d_util, following_user_id)
+        == expected["follower"]["list"]
+    )
+    assert (
+        query_user_info_by_user_id_and_sk(d_util, following_user_id, sk="count")[0][
+            "follower#"
+        ]
+        == expected["follower"]["count"]
     )
 
 
 @pytest.mark.parametrize(
-    "d_util, user_id, follower_user_id, expected",
+    "d_util, user_id, following_user_id, expected",
     [
         (
             DynamodbUtil(table_name="user"),
             10000,
             20000,
             {
-                "follower": {"list": [], "count": 0},
                 "following": {"list": [], "count": 0},
+                "follower": {"list": [], "count": 0},
             },
         )
     ],
 )
-def test_decrease_follower(d_util, user_id, follower_user_id, expected):
-    decrease_follower(d_util, user_id, follower_user_id)
+def test_decrease_u10000s_following_count(d_util, user_id, following_user_id, expected):
+    decrease_following(d_util, user_id, following_user_id)
+
     assert (
-        query_follower_list_by_user_id(d_util, user_id) == expected["follower"]["list"]
-    )
-    assert (
-        query_user_info_by_user_id_and_sk(d_util, user_id, sk="count")[0]["follower#"]
-        == expected["follower"]["count"]
-    )
-    assert (
-        query_following_list_by_user_id(d_util, follower_user_id)
+        query_following_list_by_user_id(d_util, user_id)
         == expected["following"]["list"]
     )
     assert (
-        query_user_info_by_user_id_and_sk(d_util, follower_user_id, sk="count")[0][
-            "following#"
-        ]
+        query_user_info_by_user_id_and_sk(d_util, user_id, sk="count")[0]["following#"]
         == expected["following"]["count"]
+    )
+    assert (
+        query_follower_list_by_user_id(d_util, following_user_id)
+        == expected["follower"]["list"]
+    )
+    assert (
+        query_user_info_by_user_id_and_sk(d_util, following_user_id, sk="count")[0][
+            "follower#"
+        ]
+        == expected["follower"]["count"]
     )
