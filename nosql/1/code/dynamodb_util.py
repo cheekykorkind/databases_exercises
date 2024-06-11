@@ -92,3 +92,19 @@ class DynamodbUtil:
                 for item in page["Items"]
             ]
         return items
+
+    # https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html
+    def scan_with_sk_filter(self, sk):
+        paginator = self.client.get_paginator("scan")
+        items = []
+        paginator_args = {
+            "TableName": self.table_name,
+            "FilterExpression": "contains (SK, :value)",
+            "ExpressionAttributeValues": {":value": {"S": sk}},
+        }
+        for page in paginator.paginate(**paginator_args):
+            items += [
+                {k: self.deserializer.deserialize(v) for k, v in item.items()}
+                for item in page["Items"]
+            ]
+        return items
