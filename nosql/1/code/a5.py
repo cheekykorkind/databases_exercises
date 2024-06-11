@@ -12,12 +12,26 @@ def increase_like(d_util, user_id, post_id):
 
     if not exist_post_id(d_util, post_id) or not exist_user_id(d_util, user_id):
         return None
+    d_util.put_item({"PK": f"p#{post_id}#likelist", "SK": f"u#{user_id}"})
 
-    return d_util.put_item({"PK": f"p#{post_id}#likelist", "SK": f"u#{user_id}"})
+    return d_util.update_item(
+        {
+            "PK": f"p#{post_id}#likecount",
+            "SK": "count",
+            "etc": len(query_user_like_by_post_id(d_util, post_id)),
+        }
+    )
 
 
 def decrease_like(d_util, user_id, post_id):
-    return d_util.delete_item({"PK": f"p#{post_id}#likelist", "SK": f"u#{user_id}"})
+    d_util.delete_item({"PK": f"p#{post_id}#likelist", "SK": f"u#{user_id}"})
+    return d_util.update_item(
+        {
+            "PK": f"p#{post_id}#likecount",
+            "SK": "count",
+            "etc": len(query_user_like_by_post_id(d_util, post_id)),
+        }
+    )
 
 
 def query_user_like_by_post_id(d_util, post_id):
