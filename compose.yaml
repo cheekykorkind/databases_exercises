@@ -1,14 +1,12 @@
-version: "3.9"
-
 # DOCKER_UID=$(id -u $USER) DOCKER_GID=$(id -u $USER) docker-compose up --build
 services:
   dbe-app:
     container_name: dbe-app
-    user: $DOCKER_UID:$DOCKER_GID
+    user: ${DOCKER_UID:-1001}:${DOCKER_GID:-1001}
     build:
       args:
-        USER_UID: $DOCKER_UID
-        USER_GID: $DOCKER_GID
+        USER_UID: ${DOCKER_UID:-1001}
+        USER_GID: ${DOCKER_GID:-1001}
         UNAME: $USER
     volumes:
       - ./:/workspace/myapp

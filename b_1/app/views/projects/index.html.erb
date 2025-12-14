@@ -1,0 +1,19 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Projects" %>
+
+<h1>Projects</h1>
+
+<div id="projects">
+  <% @projects.each do |project| %>
+    <%= render project %>
+    <p>
+      <%= link_to "Show this project", project %> | 
+      <%= link_to "Destroy this project", project, 
+          data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, 
+          style: "color: red" %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New project", new_project_path %>

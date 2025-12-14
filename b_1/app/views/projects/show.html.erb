@@ -1,0 +1,28 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @project %>
+
+<div>
+  <%= link_to "Add New Article", new_project_article_path(@project) %>
+</div>
+
+<hr>
+
+<h2>Articles</h2>
+<% @project.articles.each do |article| %>
+  <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+    <p><%= article.content %></p>
+    <small>Written at <%= article.created_at %></small>
+    <%= link_to "Edit this article", edit_project_article_path(@project, article) %>
+    <%= link_to "Destroy this article", project_article_path(@project, article), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, style: "color: red" %>
+  </div>
+<% end %>
+
+<br>
+<div>
+  <%= link_to "Edit this project", edit_project_path(@project) %> |
+  <%= link_to "Destroy this project", @project, 
+      data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, 
+      style: "color: red" %> |
+  <%= link_to "Back to projects", projects_path %>
+</div>
