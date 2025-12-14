@@ -3,8 +3,8 @@
 <%= render @article %>
 
 <div>
-  <%= link_to "Edit this article", edit_article_path(@article) %> |
-  <%= link_to "Back to articles", articles_path %>
+  <%= link_to "Show this article", project_article_path(@project, @article) %> |
+  <%= link_to "Back to Articles", project_articles_path(@project) %>
 
-  <%= button_to "Destroy this article", @article, method: :delete %>
+  <%= link_to "Destroy this article", project_article_path(@project, @article), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, style: "color: red" %>
 </div>

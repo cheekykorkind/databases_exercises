@@ -1,9 +1,10 @@
 class ArticlesController < ApplicationController
+  before_action :set_project
   before_action :set_article, only: %i[ show edit update destroy ]
 
   # GET /articles or /articles.json
   def index
-    @articles = Article.all
+    @articles = @project.articles
   end
 
   # GET /articles/1 or /articles/1.json
@@ -12,7 +13,7 @@ class ArticlesController < ApplicationController
 
   # GET /articles/new
   def new
-    @article = Article.new
+    @article = @project.articles.build
   end
 
   # GET /articles/1/edit
@@ -21,11 +22,11 @@ class ArticlesController < ApplicationController
 
   # POST /articles or /articles.json
   def create
-    @article = Article.new(article_params)
+    @article = @project.articles.build(article_params)
 
     respond_to do |format|
       if @article.save
-        format.html { redirect_to @article, notice: "Article was successfully created." }
+        format.html { redirect_to project_path(@project), notice: "Article was successfully created." }
       else
         format.html { render :new, status: :unprocessable_entity }
       end
@@ -36,7 +37,7 @@ class ArticlesController < ApplicationController
   def update
     respond_to do |format|
       if @article.update(article_params)
-        format.html { redirect_to @article, notice: "Article was successfully updated.", status: :see_other }
+        format.html { redirect_to project_path(@project), notice: "Article was successfully updated.", status: :see_other }
       else
         format.html { render :edit, status: :unprocessable_entity }
       end
@@ -48,18 +49,21 @@ class ArticlesController < ApplicationController
     @article.destroy!
 
     respond_to do |format|
-      format.html { redirect_to articles_path, notice: "Article was successfully destroyed.", status: :see_other }
+      format.html { redirect_to project_path(@project), notice: "Article was successfully destroyed.", status: :see_other }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+    def set_project
+      @project = Project.find(params[:project_id])
+    end
+
     def set_article
-      @article = Article.find(params.expect(:id))
+      @article = @project.articles.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def article_params
-      params.expect(article: [ :project_id, :content ])
+      params.require(:article).permit(:content)
     end
 end
