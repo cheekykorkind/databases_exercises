@@ -1,11 +1,11 @@
 class SensorsController < ApplicationController
-  before_action :set_sensor, only: %i[ show edit update destroy ]
+  before_action :set_project
+  before_action :set_sensor, only: [:show, :update, :destroy]
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
   # GET /sensors or /sensors.json
   def index
-    @sensors = Sensor.all
-    render json: @sensors, only: [:id, :name]
+    render json: @project.sensors, only: [:id, :name]
   end
 
   # GET /sensors/1 or /sensors/1.json
@@ -13,18 +13,9 @@ class SensorsController < ApplicationController
     render json: @sensor, only: [:id, :name]
   end
 
-  # GET /sensors/new
-  def new
-    @sensor = Sensor.new
-  end
-
-  # GET /sensors/1/edit
-  def edit
-  end
-
   # POST /sensors or /sensors.json
   def create
-    @sensor = Sensor.new(sensor_params)
+    @sensor = @project.sensors.build(sensor_params)
 
     if @sensor.save
       render json: @sensor, status: :created, location: @sensor
@@ -36,7 +27,7 @@ class SensorsController < ApplicationController
   # PATCH/PUT /sensors/1 or /sensors/1.json
   def update
     if @sensor.update(sensor_params)
-      render json: @sensor, status: :ok, only: [:id, :name, :memo]
+      render json: @sensor, status: :ok, only: [:id, :name]
     else
       render json: @sensor.errors, status: :unprocessable_entity
     end
@@ -50,15 +41,18 @@ class SensorsController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
+    def set_project
+      @project = Project.find(params[:project_id])
+    end
+
     def set_sensor
-      @sensor = Sensor.find(params.expect(:id))
+      @sensor = @project.sensors.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def sensor_params
-      params.expect(sensor: [ :project_id, :name ])
+      params.require(:sensor).permit(:name)
     end
-
 
     def record_not_found
       render json: { error: "Data not found" }, status: :not_found
