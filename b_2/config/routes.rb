@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
-  resources :sensor_data
   resources :projects do
-    resources :sensors
+    resources :sensors do
+      resources :sensor_data
+    end
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
