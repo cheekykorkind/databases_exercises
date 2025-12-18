@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :sensor_data
   resources :projects do
     resources :sensors
   end
