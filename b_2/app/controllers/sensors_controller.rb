@@ -18,7 +18,7 @@ class SensorsController < ApplicationController
     @sensor = @project.sensors.build(sensor_params)
 
     if @sensor.save
-      render json: @sensor, status: :created, location: @sensor
+      render json: @sensor, status: :created, location: project_sensor_url(@project, @sensor)
     else
       render json: @sensor.errors, status: :unprocessable_entity
     end
