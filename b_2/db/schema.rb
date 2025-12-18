@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_14_054959) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_18_112200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -20,4 +20,23 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_14_054959) do
     t.string "name"
     t.datetime "updated_at", null: false
   end
+
+  create_table "sensor_data", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.json "data"
+    t.bigint "sensor_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sensor_id"], name: "index_sensor_data_on_sensor_id"
+  end
+
+  create_table "sensors", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.bigint "project_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_sensors_on_project_id"
+  end
+
+  add_foreign_key "sensor_data", "sensors"
+  add_foreign_key "sensors", "projects"
 end
